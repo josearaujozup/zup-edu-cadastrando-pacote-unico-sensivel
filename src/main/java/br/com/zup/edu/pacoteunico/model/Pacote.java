@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import br.com.zup.edu.pacoteunico.utils.CpfUtils;
+
 @Entity
 public class Pacote {
 	@Id
@@ -15,10 +17,13 @@ public class Pacote {
     private Long id;
 	
 	@Column(nullable = false)
-    private String nome;
+    private String nomeTitular;
 	
 	@Column(nullable = false)
-    private String cpf;
+    private String cpfTitular;
+	
+	@Column(nullable = false, unique = true, length = 64) // unico
+    private String hashDoCpf;
 	
 	@Column(nullable = false)
     private String celular;
@@ -27,5 +32,25 @@ public class Pacote {
     private Integer quantidadeDados;
 	
 	@Column(nullable = false)
-    private LocalDate dataCadastro;
+    private LocalDate dataCadastro = LocalDate.now();
+
+	public Pacote(String nome, String cpf, String celular, Integer quantidadeDados) {
+		this.nomeTitular = nome;
+		this.cpfTitular = CpfUtils.anonymize(cpf);
+		this.hashDoCpf = CpfUtils.hash(cpf); // gera hash do cpf
+		this.celular = celular;
+		this.quantidadeDados = quantidadeDados;
+	}
+	
+	/**
+     * @deprecated construtor para uso exclusivo do Hibernate
+     */
+	public Pacote() {
+		
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
 }
